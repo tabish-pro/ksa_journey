@@ -1,0 +1,5 @@
+{
+  "name": "KSA Journey Mapper",
+  "description": "A cinematic, data-driven dashboard mapping the complete end-to-end visitor journey of a tourist in Saudi Arabia, utilizing Gemini for dynamic persona generation and sentiment analysis.",
+  "requestFramePermissions": []
+}
