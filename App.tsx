@@ -16,6 +16,8 @@ export default function App() {
   const fetchData = async (pType: string) => {
     setLoading(true);
     setError(null);
+    // Note: We do NOT clear 'data' here to allow the previous journey to remain visible 
+    // while the new one loads, preventing layout shifts and improving perceived speed.
     try {
       const journey = await generateVisitorJourney(pType);
       setData(journey);
@@ -55,8 +57,11 @@ export default function App() {
         <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
       </div>
 
-      {/* Main Layout Container */}
-      <div className="relative z-10 container mx-auto px-4 py-6 lg:py-8 lg:px-12 flex flex-col lg:h-screen">
+      {/* Main Layout Container 
+          - Mobile: min-h-screen (allows scrolling)
+          - Desktop: h-screen (fixed viewport application feel)
+      */}
+      <div className="relative z-10 container mx-auto px-4 py-6 lg:py-8 lg:px-12 flex flex-col min-h-screen lg:h-screen">
         
         {/* Header */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 lg:mb-8 border-b border-white/10 pb-6 shrink-0">
@@ -76,15 +81,18 @@ export default function App() {
               >
                 <option value="Luxury">Luxury Seeker</option>
                 <option value="Adventure">Desert Adventurer</option>
-                <option value="Cultural">History Buff</option>
-                <option value="Business">Business Traveler</option>
+                <option value="Cultural">History & Heritage</option>
+                <option value="Business">Business & Investment</option>
                 <option value="Family">Family Vacation</option>
-                <option value="Religious">Pilgrim (Umrah/Hajj)</option>
+                <option value="Religious">Pilgrim (Umrah)</option>
+                <option value="Eco">Eco-Tourism</option>
+                <option value="Culinary">Foodie Explorer</option>
               </select>
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                 <DynamicIcon name="map" size={14} />
               </div>
             </div>
+            {/* Show spinner in header when reloading existing data */}
             {loading && data && <Loader2 className="animate-spin text-ksa-gold shrink-0" size={20} />}
           </div>
         </header>
@@ -104,6 +112,7 @@ export default function App() {
             </div>
           </div>
         ) : !data && loading ? (
+          // Initial Full Screen Loader
           <div className="flex-1 flex flex-col items-center justify-center animate-pulse min-h-[50vh]">
             <div className="relative w-24 h-24 mb-8">
               <div className="absolute inset-0 rounded-full border-4 border-slate-700"></div>
@@ -116,14 +125,16 @@ export default function App() {
             <p className="text-slate-400 text-sm mt-2">Generating personalized experiences</p>
           </div>
         ) : data ? (
-          <div className={`flex-1 flex flex-col lg:flex-row gap-8 lg:overflow-hidden transition-opacity duration-500 ${loading ? 'opacity-60 pointer-events-none grayscale-[0.3]' : 'opacity-100'}`}>
+          // Main Content
+          // Use dimming opacity to indicate loading state instead of unmounting
+          <div className={`flex-1 flex flex-col lg:flex-row gap-8 lg:overflow-hidden transition-all duration-500 ${loading ? 'opacity-60 pointer-events-none grayscale-[0.5]' : 'opacity-100'}`}>
             
             {/* Left Column: Persona & Sentiment Chart */}
-            <div className="lg:w-1/3 flex flex-col gap-6 shrink-0 lg:overflow-y-auto no-scrollbar pb-6 lg:pb-0">
+            <div className="lg:w-1/3 flex flex-col gap-6 shrink-0 lg:h-full lg:overflow-y-auto no-scrollbar pb-6 lg:pb-0">
               {/* Persona Card */}
               <div className="glass-panel p-6 rounded-2xl border-l-4 border-ksa-gold shadow-xl">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center overflow-hidden border-2 border-white/10 shadow-inner">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center overflow-hidden border-2 border-white/10 shadow-inner shrink-0">
                     <DynamicIcon name="user" size={28} className="text-ksa-gold" />
                   </div>
                   <div>
@@ -160,8 +171,8 @@ export default function App() {
             </div>
 
             {/* Right Column: Stages Timeline */}
-            <div className="lg:w-2/3 flex flex-col h-full lg:overflow-hidden">
-              <h3 className="text-lg font-medium text-slate-200 mb-4 flex items-center gap-2 shrink-0 font-display sticky top-0 bg-ksa-deep/95 lg:bg-transparent z-20 py-2 lg:py-0 backdrop-blur lg:backdrop-blur-none">
+            <div className="lg:w-2/3 flex flex-col lg:h-full lg:overflow-hidden">
+              <h3 className="text-lg font-medium text-slate-200 mb-4 flex items-center gap-2 shrink-0 font-display sticky top-0 bg-ksa-deep/95 lg:bg-transparent z-20 py-3 lg:py-0 backdrop-blur-md lg:backdrop-blur-none border-b lg:border-none border-white/5">
                 <DynamicIcon name="map" className="text-ksa-gold" size={18} />
                 Experience Timeline
               </h3>

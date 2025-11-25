@@ -20,10 +20,10 @@ export const generateVisitorJourney = async (personaType: string = "random"): Pr
 
     Requirements:
     - Sentiment score (0-100) for the curve.
-    - Narrative: CONCISE (max 30 words).
-    - Experience Points: 3 specific moments per stage with short descriptions.
+    - Narrative: VERY CONCISE (max 25 words).
+    - Experience Points: 3 specific moments per stage.
     
-    Output valid JSON matching the schema.
+    Output valid JSON.
   `;
 
   const response = await ai.models.generateContent({
@@ -41,7 +41,7 @@ export const generateVisitorJourney = async (personaType: string = "random"): Pr
               origin: { type: Type.STRING },
               travelStyle: { type: Type.STRING },
               duration: { type: Type.STRING },
-              summary: { type: Type.STRING, description: "Max 2 sentences." },
+              summary: { type: Type.STRING, description: "Max 20 words." },
             },
             required: ["name", "origin", "travelStyle", "duration", "summary"]
           },
@@ -54,15 +54,15 @@ export const generateVisitorJourney = async (personaType: string = "random"): Pr
                 stageName: { type: Type.STRING },
                 location: { type: Type.STRING },
                 sentimentScore: { type: Type.INTEGER },
-                narrative: { type: Type.STRING, description: "Max 30 words." },
-                imageUrl: { type: Type.STRING, description: "Visual keyword for image search" },
+                narrative: { type: Type.STRING, description: "Max 25 words." },
+                imageUrl: { type: Type.STRING, description: "One word visual keyword" },
                 experiencePoints: {
                   type: Type.ARRAY,
                   items: {
                     type: Type.OBJECT,
                     properties: {
                       title: { type: Type.STRING },
-                      description: { type: Type.STRING },
+                      description: { type: Type.STRING, description: "Max 10 words" },
                       type: { type: Type.STRING, enum: ["positive", "neutral", "negative"] },
                       icon: { type: Type.STRING, description: "Icon name: plane, map, camera, coffee, bed, star, sun, creditcard, user, heart, alert, check, luggage, utensils, mountain, landmark, building" }
                     },
